@@ -20,7 +20,14 @@ module.exports = {
   gzipEnabled: true,
   gzipThreshold: 200,
 
-  // Database connection
+  // Database configuration
+  //
+  // dbClient expects a string, currently only 'pg' (PostgresSQL) is supported
+  // connection expects a configuration object for Knex.
+  //
+  // References:
+  // Connection options http://knexjs.org/#Installation-client
+  // Migrations http://knexjs.org/#Migrations
   dbClient: 'pg',
   connection: {
     host: 'localhost',
@@ -29,4 +36,7 @@ module.exports = {
     database: 'express_cms_dev',
     charset: 'utf-8'
   }
+  // migrations: {
+  //   tableName: 'migrations'
+  // }
 };

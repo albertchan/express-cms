@@ -6,6 +6,16 @@ This is a modern JS skeleton for [Brunch](http://brunch.io).
 
 Clone this repo manually or use `brunch new dir -s brunch/with-es6`
 
+## Migrations
+
+```
+CREATE DATABASE "express_cms_dev";
+CREATE USER express WITH PASSWORD 'verysecret';
+ALTER ROLE express SET client_encoding TO 'utf8';
+GRANT ALL PRIVILEGES ON DATABASE "express_cms_dev" TO express;
+\q
+```
+
 ## Getting started
 
 * Install (if you don't have them):

@@ -1,21 +1,28 @@
-import bookshelf from 'bookshelf';
 import compression from 'compression';
-import config from './config/server.config';
 import cors from 'cors';
 import Express from 'express';
-import knex from 'knex';
-import models from './models';
 import path from 'path';
+import Promise from 'bluebird';
+import { getDatabaseVersion, populate } from './lib/migrations';
+import config from './config/server.config';
+import models from './models';
 import routes from './routes';
 
 // ------------------------------------
 // Initializations
 // ------------------------------------
+getDatabaseVersion()
+  .then(currentVersion => {
+    console.log('currentVersion');
+  })
+  .catch(err => {
+    if (err) {
+      // return populate();
+    }
+
+    return err;
+  });
 const server = new Express();
-const db = knex({
-  client: config.dbClient,
-  connection: config.connection
-});
 
 // ------------------------------------
 // Server configuration

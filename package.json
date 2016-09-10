@@ -11,7 +11,7 @@
     "Bookshelf.js",
     "Brunch",
     "Express",
-    "Node.js",
+    "Node.js"
   ],
   "scripts": {
     "dev": "nodemon -w src --ignore src/client/ --exec \"babel-node src/server --presets es2015,stage-0\"",
@@ -19,6 +19,7 @@
     "prod": "brunch build --production"
   },
   "dependencies": {
+    "bluebird": "~3.4.0",
     "body-parser": "~1.15.0",
     "bookshelf": "~0.10.0",
     "compression": "~1.6.0",
@@ -28,7 +29,8 @@
     "knex": "~0.11.0",
     "lodash": "~4.15.0",
     "oauth2orize": "~1.5.0",
-    "pg": "~4.1.0"
+    "pg": "~4.1.0",
+    "winston": "~2.2.0"
   },
   "devDependencies": {
     "auto-reload-brunch": "^2.0.0",

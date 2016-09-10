@@ -1,18 +1,13 @@
-// import forEach from 'lodash/array';
-import _ from 'lodash';
+import { schema as users } from './user';
+import { schema as profiles } from './profile';
+import { schema as schema_migrations } from './base/schema_migration';
 
 // Expose all models
-const exports = module.exports;
-const models = [
-  'profiles',
-  'users'
-];
+export User from './user';
+export Profile from './profile';
 
-function init() {
-  models.forEach(name => {
-    _.extend(exports, require('./' + name));
-  });
-}
-
-// Expose init
-exports.init = init;
+export const schema = {
+  users: users,
+  profiles: profiles,
+  schema_migrations: schema_migrations
+};
