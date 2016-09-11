@@ -27,6 +27,12 @@ module.exports = {
   plugins: {
     babel: {
       presets: ['es2015']
+    },
+    sass: {
+      options: {
+        includePaths: ['node_modules/bootstrap/dist/css'],
+        precision: 8
+      }
     }
   }
 };
