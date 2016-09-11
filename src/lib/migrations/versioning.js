@@ -7,19 +7,17 @@ export function getDatabaseVersion() {
       return db('schema_migrations')
         .first('version')
         .then(row => {
-          console.log('version', row);
+          // console.log('version', row);
         });
     }
     return Promise.reject(new Error('Database not populated'));
   });
 }
 
-export function setDatabaseVersion(transaction) {
-  const version = Date.now();
-
+export function setDatabaseVersion(transaction, version) {
   return (transaction || db)('schema_migrations')
     .insert({
       version: version,
-      created_at: version
+      created_at: Date.now()
     });
 }

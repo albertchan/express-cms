@@ -1,4 +1,5 @@
 import apiRoutes from './api/v1';
+import userRoutes from './users';
 
 export default (server) => {
 
@@ -7,6 +8,9 @@ export default (server) => {
       title: 'Home'
     });
   });
+
+  // users
+  userRoutes(server);
 
   // import API routes
   apiRoutes(server);
