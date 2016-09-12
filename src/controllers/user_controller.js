@@ -1,6 +1,9 @@
 import { User } from '../models';
 
 export function index(req, res) {
+  const data = User.findPage();
+  console.log('browse', data);
+
   res.render('user/index', {
     title: 'Users'
   });
@@ -55,5 +58,4 @@ function doQuery(options) {
       return Promise.reject(new Error('User with that email already exists.'));
     }
   });
-
 }

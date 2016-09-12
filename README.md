@@ -27,7 +27,7 @@ GRANT ALL PRIVILEGES ON DATABASE "express_cms_dev" TO express;
     * `brunch build --production` — builds minified project for production
 * Learn:
     * `public/` dir is fully auto-generated and served by HTTP server.  Write your code in `app/` dir.
-    * Place static files you want to be copied from `app/assets/` to `public/`.
+    * Place static files you want to be copied from `client/assets/` to `public/`.
     * [Brunch site](http://brunch.io), [Getting started guide](https://github.com/brunch/brunch-guide#readme)
 
 ## ES7

@@ -13,10 +13,38 @@ export const schema = {
 export const User = Bookshelf.Model.extend({
   tableName: 'users',
 
+  hasTimestamps: true,
+
   role() {
     return this.hasOne('Role');
   }
 }, {
+  /**
+    * permittedOptions
+    *
+    * Returns an array of keys permitted in a method's `options` hash, depending
+    * on the current method.
+    *
+    * @param {String} methodName Name of the method to check valid options for
+    * @return {Array} Keys allowed in the `options` hash of the model's method
+    */
+  permittedOptions(methodName) {
+    let options = [];
+    const validOptions = {
+      findOne: ['withRelated', 'status'],
+      setup: ['id'],
+      edit: ['withRelated', 'id'],
+      findPage: ['page', 'limit', 'columns', 'filter', 'order', 'status'],
+      findAll: ['filter']
+    };
+
+    if (validOptions[methodName]) {
+      return validOptions[methodName];
+    }
+
+    return options;
+  },
+
   /**
    * add
    *
@@ -33,8 +61,6 @@ export const User = Bookshelf.Model.extend({
       name: data.name,
       password: data.password
     };
-
-    console.log(userData);
 
     User.forge(userData).save().then(addedUser => {
       return addedUser;

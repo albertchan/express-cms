@@ -41,6 +41,9 @@ server.use(compression({
   threshold: config.gzipThreshold
 }));
 
+// serve static files
+server.use(Express.static('public'));
+
 // ------------------------------------
 // View helpers
 // ------------------------------------
