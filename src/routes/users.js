@@ -1,7 +1,8 @@
 import {
   index,
   create,
-  show,
+  add,
+  read,
   update
 } from '../controllers/user_controller';
 
@@ -11,9 +12,11 @@ import {
 export default (server) => {
   server.get('/users', index);
 
-  server.get('/users/new', create);
+  server.post('/users/new', create);
 
-  server.get('/users/:id', show);
+  server.get('/users/new', add);
+
+  server.get('/users/:id', read);
 
   server.get('/users/:id/edit', update);
 }
