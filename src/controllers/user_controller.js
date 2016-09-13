@@ -1,8 +1,7 @@
 import { User } from '../models';
 
 export function index(req, res) {
-  const data = User.findPage();
-  console.log('browse', data);
+  User.findPage();
 
   res.render('user/index', {
     title: 'Users'

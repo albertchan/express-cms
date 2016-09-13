@@ -15,6 +15,9 @@ Bookshelf = bookshelf(db);
 // Load the Bookshelf registry plugin, which helps us avoid circular dependencies
 Bookshelf.plugin('registry');
 
+// Load the Bookshelf pagination plugin for `fetchPage`
+Bookshelf.plugin('pagination');
+
 // Load the Ghost filter plugin, which handles applying a 'filter' to findPage requests
 Bookshelf.plugin(filter);
 
@@ -137,20 +140,19 @@ Bookshelf.Model = Bookshelf.Model.extend({
     // Add Filter behaviour
     itemCollection.applyDefaultAndCustomFilters(options);
 
-    return itemCollection.fetchPage(options).then(response => {
-    // return this.query().fetchPage(options).then(response => {
+    return itemCollection.fetchPage(options).then(result => {
       let data = {};
       let models = [];
 
       options.columns = requestedColumns;
-      models = response.collection.toJSON(options);
+      models = result.toJSON();
 
       // re-add any computed properties that were stripped out before the call to fetchPage
       // pick only requested before returning JSON
       data[tableName] = _map(models, model => {
         return options.columns ? _pick(model, options.columns) : model;
       });
-      data.meta = {pagination: response.pagination};
+      data.meta = {pagination: result.pagination};
 
       return data;
     });
