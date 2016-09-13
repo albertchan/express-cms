@@ -1,10 +1,22 @@
+import Vue from 'vue';
+import { createRenderer } from 'vue-server-renderer';
 import { User } from '../models';
 
 export function index(req, res) {
-  User.findPage();
+  User.findPage().then(result => {
+    const renderer = createRenderer();
+    const vm = new Vue({
+      render(el) {
+        return el('div', 'hello');
+      }
+    });
 
-  res.render('user/index', {
-    title: 'Users'
+    renderer.renderToString(vm, (err, html) => {
+      res.render('user/index', {
+        title: 'Users',
+        usersList: html
+      });
+    })
   });
 }
 
