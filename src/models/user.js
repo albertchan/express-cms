@@ -20,14 +20,14 @@ export const User = Bookshelf.Model.extend({
   }
 }, {
   /**
-    * permittedOptions
-    *
-    * Returns an array of keys permitted in a method's `options` hash, depending
-    * on the current method.
-    *
-    * @param {String} methodName Name of the method to check valid options for
-    * @return {Array} Keys allowed in the `options` hash of the model's method
-    */
+   * permittedOptions
+   *
+   * Returns an array of keys permitted in a method's `options` hash, depending
+   * on the current method.
+   *
+   * @param {String} methodName Name of the method to check valid options for
+   * @return {Array} Keys allowed in the `options` hash of the model's method
+   */
   permittedOptions(methodName) {
     let options = [];
     const validOptions = {
@@ -114,7 +114,15 @@ export const User = Bookshelf.Model.extend({
 
   },
 
-  // Fetch a user by email
+  /**
+   * getByEmail
+   *
+   * Finds an user by email.
+   *
+   * @param {string} email
+   * @param {object} options
+   * @return {object} model
+   */
   getByEmail(email, options) {
     options = options || {};
     options.require = true;

@@ -24,7 +24,7 @@ getDatabaseVersion()
     return err;
   });
 const server = new Express();
-const urlencodedParser = bodyParser.urlencoded({ extended: false })
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 // ------------------------------------
 // Server configuration
