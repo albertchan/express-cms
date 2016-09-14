@@ -9,7 +9,7 @@ import { filter } from '../plugins';
 
 let Bookshelf;
 
-// Initialize a new Bookshelf instance for reference elsewhere in apap
+// Initialize a new Bookshelf instance for reference elsewhere in app
 Bookshelf = bookshelf(db);
 
 // Load the Bookshelf registry plugin, which helps us avoid circular dependencies
@@ -66,7 +66,9 @@ Bookshelf.Model = Bookshelf.Model.extend({
    * @return {Object} results The filtered results containing only what's allowed in the schema
    */
   filterData(data) {
-
+    // TODO implement data sanitization
+    const filteredData = data;
+    return filteredData;
   },
 
   /**
@@ -95,7 +97,32 @@ Bookshelf.Model = Bookshelf.Model.extend({
    * @return {Promise} results  <Collection>
    */
   findAll(options) {
+    options = this.filterOptions(options, 'findAll');
+    options.withRelated = _union(options.withRelated, options.include);
+
     const itemCollection = this.forge(null, {context: options.context});
+
+    return itemCollection.fetchAll(options).then(result => {
+      if (options.include) {
+        
+      }
+    });
+  },
+
+  /**
+   * findOne
+   *
+   * Find one model where data determines what to match on.
+   *
+   * @param {Object} options Represents options to filter in order to be passed to the Bookshelf query.
+   * @param {String} methodName The name of the method to check valid options for.
+   * @return {Promise} model Single model
+  */
+  findOne(data, options) {
+    data = this.filterData(data);
+    options = this.filterOptions(options, 'findOne');
+    // pass `include` to forge so that toJSON has access
+    return this.forge(data, {include: options.include}).fetch(options);
   },
 
   /**

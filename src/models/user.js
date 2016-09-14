@@ -29,7 +29,7 @@ export const User = Bookshelf.Model.extend({
    * @return {Array} Keys allowed in the `options` hash of the model's method
    */
   permittedOptions(methodName) {
-    let options = [];
+    let options = Bookshelf.Model.permittedOptions();
     const validOptions = {
       findOne: ['withRelated', 'status'],
       setup: ['id'],
@@ -39,10 +39,20 @@ export const User = Bookshelf.Model.extend({
     };
 
     if (validOptions[methodName]) {
-      return validOptions[methodName];
+      // return validOptions[methodName];
+      options = options.concat(validOptions[methodName]);
     }
 
     return options;
+  },
+
+  /**
+   * findOne
+   *
+   * @extends Bookshelf.Model.findOne to include roles
+   */
+  findOne(data, options) {
+
   },
 
   /**

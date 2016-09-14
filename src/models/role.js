@@ -2,21 +2,15 @@ import Bookshelf from './base';
 
 export const schema = {
   id: { type: 'increments', nullable: false, primary: true },
-  user_id: { type: 'integer', nullable: false, unsigned: true, references: 'users.id' },
-  address1: { type: 'string', maxlength: 255 },
-  address2: { type: 'string', maxlength: 255 },
-  city: { type: 'string', maxlength: 255 },
-  state_code: { type: 'string', maxlength: 8 },
-  country_code: { type: 'string', maxlength: 8 },
-  zip_code: { type: 'string', maxlength: 32 },
-  tel_number: { type: 'string', maxlength: 32 }
+  name: { type: 'string', maxlength: 255, nullable: false },
+  description: { type: 'string', maxlength: 255, nullable: false }
 };
 
-export const Profile = Bookshelf.Model.extend({
-  tableName: 'profiles',
+export const Role = Bookshelf.Model.extend({
+  tableName: 'roels',
 
   user() {
-    return this.belongsTo('User');
+    return this.belongsToMany('User');
   }
 }, {
   /**
@@ -29,7 +23,7 @@ export const Profile = Bookshelf.Model.extend({
    * @return {Array} Keys allowed in the `options` hash of the model's method
    */
   permittedOptions(methodName) {
-    let options = Bookshelf.Model.permittedOptions();
+    let options = let options = Bookshelf.Model.permittedOptions();
     const validOptions = {
       findOne: ['withRelated'],
       findAll: ['withRelated']
@@ -41,4 +35,8 @@ export const Profile = Bookshelf.Model.extend({
 
     return options;
   }
+});
+
+export const Roles = Bookshelf.Collection.extend({
+  model: Role
 });
