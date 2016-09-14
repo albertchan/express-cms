@@ -1,15 +1,18 @@
 import Vue from 'vue';
 import { createRenderer } from 'vue-server-renderer';
 import { User } from '../models';
+import { ListComponent } from '../components/list_component'
 
 export function index(req, res) {
   User.findPage().then(result => {
     const renderer = createRenderer();
     const vm = new Vue({
-      render(el) {
-        return el('div', 'hello');
+      template: '<ul><li v-for="item in items">{{item}}</li></ul>',
+      data: {
+        items: () => []
       }
     });
+    vm.items = result.users;
 
     renderer.renderToString(vm, (err, html) => {
       res.render('user/index', {
