@@ -14,10 +14,12 @@
     "Node.js"
   ],
   "scripts": {
+    "build-server": "./node_modules/.bin/babel ./src/index.js --out-file prod-server.js",
     "dev": "concurrently --kill-others \"npm run dev-client\" \"npm run dev-server\"",
     "dev-client": "brunch watch --server",
     "dev-server": "nodemon -w src --ignore src/client/ --exec \"babel-node src/server --presets es2015,stage-0\"",
-    "prod": "brunch build --production"
+    "prod": "brunch build --production",
+    "prod-server": "node ./prod-server.js"
   },
   "dependencies": {
     "bluebird": "~3.4.0",
@@ -39,6 +41,7 @@
   "devDependencies": {
     "babel-brunch": "~6.0.0",
     "babel-cli": "~6.14.0",
+    "babel-polyfill": "6.13.0",
     "babel-preset-es2015": "~6.14.0",
     "babel-preset-stage-0": "~6.5.0",
     "bootstrap": "~3.3.0",
