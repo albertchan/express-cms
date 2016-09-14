@@ -1,23 +1,18 @@
 import Vue from 'vue';
 import { createRenderer } from 'vue-server-renderer';
 import { User } from '../models';
-import { ListComponent } from '../components/list_component'
+import { usersTable } from '../components/users_table';
 
 export function index(req, res) {
   User.findPage().then(result => {
     const renderer = createRenderer();
-    const vm = new Vue({
-      template: '<ul><li v-for="item in items">{{item}}</li></ul>',
-      data: {
-        items: () => []
-      }
-    });
+    const vm = usersTable;
     vm.items = result.users;
 
     renderer.renderToString(vm, (err, html) => {
       res.render('user/index', {
         title: 'Users',
-        usersList: html
+        usersTable: html
       });
     })
   });
