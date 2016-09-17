@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { createRenderer } from 'vue-server-renderer';
-import { User } from '../models';
+import { User } from '../models/user';
+import { Profile } from '../models/profile';
 import { usersTable } from '../components/users_table';
 
 export function index(req, res) {

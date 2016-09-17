@@ -7,9 +7,8 @@ import _union from 'lodash/union';
 import db from '../../lib/db';
 import { filter } from '../plugins';
 
-let Bookshelf;
-
 // Initialize a new Bookshelf instance for reference elsewhere in app
+let Bookshelf;
 Bookshelf = bookshelf(db);
 
 // Load the Bookshelf registry plugin, which helps us avoid circular dependencies
@@ -104,7 +103,7 @@ Bookshelf.Model = Bookshelf.Model.extend({
 
     return itemCollection.fetchAll(options).then(result => {
       if (options.include) {
-        
+
       }
     });
   },
@@ -167,6 +166,9 @@ Bookshelf.Model = Bookshelf.Model.extend({
     // Add Filter behaviour
     itemCollection.applyDefaultAndCustomFilters(options);
 
+    // Handle related objects
+    options.withRelated = _union(options.withRelated, options.include);
+
     return itemCollection.fetchPage(options).then(result => {
       let data = {};
       let models = [];
@@ -187,3 +189,4 @@ Bookshelf.Model = Bookshelf.Model.extend({
 });
 
 export default Bookshelf;
+module.exports = Bookshelf;

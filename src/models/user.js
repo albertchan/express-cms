@@ -1,4 +1,5 @@
 import Bookshelf from './base';
+import { Profile } from './profile';
 import uuid from 'node-uuid';
 
 export const schema = {
@@ -10,15 +11,19 @@ export const schema = {
   timestamps: { type: 'timestamps' }
 };
 
-export const User = Bookshelf.Model.extend({
-  tableName: 'users',
-
-  hasTimestamps: true,
-
-  role() {
-    return this.hasOne('Role');
+export class User extends Bookshelf.Model {
+  get tableName() {
+    return 'users';
   }
-}, {
+
+  get hasTimestamps() {
+    return true;
+  }
+
+  profile() {
+    return this.hasOne('Profile');
+  }
+
   /**
    * permittedOptions
    *
@@ -28,7 +33,7 @@ export const User = Bookshelf.Model.extend({
    * @param {String} methodName Name of the method to check valid options for
    * @return {Array} Keys allowed in the `options` hash of the model's method
    */
-  permittedOptions(methodName) {
+  static permittedOptions(methodName) {
     let options = Bookshelf.Model.permittedOptions();
     const validOptions = {
       findOne: ['withRelated', 'status'],
@@ -44,16 +49,16 @@ export const User = Bookshelf.Model.extend({
     }
 
     return options;
-  },
+  }
 
   /**
    * findOne
    *
    * @extends Bookshelf.Model.findOne to include roles
    */
-  findOne(data, options) {
+  static findOne(data, options) {
 
-  },
+  }
 
   /**
    * add
@@ -64,7 +69,7 @@ export const User = Bookshelf.Model.extend({
    * @param {object} data
    * @param {object} options
    */
-  add(data, options) {
+  static add(data, options) {
     const userData = {
       uuid: uuid.v4(),
       email: data.email,
@@ -72,10 +77,28 @@ export const User = Bookshelf.Model.extend({
       password: data.password
     };
 
-    User.forge(userData).save().then(addedUser => {
-      return addedUser;
+    Bookshelf.transaction(t => {
+      return User.forge()
+        .save(userData, {transacting: t})
+        .then(addedUser => {
+          // TODO: Need to wait for Bookshelf to get relations right and refactor
+          // this ugly manual crap
+          return Profile.forge().save({user_id: addedUser.id}, {transacting: t});
+        })
+        .then(addedProfile => {
+          t.commit;
+          return addedProfile;
+        })
+        .catch(error => {
+          t.rollback;
+          console.error('error --->', error);
+        });
+    }).then(model => {
+      // ok
+    }).catch(error => {
+      console.error(error);
     });
-  },
+  }
 
   /**
    * check
@@ -84,9 +107,9 @@ export const User = Bookshelf.Model.extend({
    *
    * @param {object} object
    */
-  check(data) {
+  static check(data) {
 
-  },
+  }
 
   /**
    * edit
@@ -96,9 +119,9 @@ export const User = Bookshelf.Model.extend({
    * @param {object} data
    * @param {object} options
    */
-  edit(data, options) {
+  static edit(data, options) {
 
-  },
+  }
 
   /**
    * changePassword
@@ -108,21 +131,21 @@ export const User = Bookshelf.Model.extend({
    * @param {object} data
    * @param {object} options
    */
-  changePassword(data, options) {
+  static changePassword(data, options) {
 
-  },
+  }
 
-  resetPassword(options) {
+  static resetPassword(options) {
 
-  },
+  }
 
-  generateResetToken(email, expires, hash) {
+  static generateResetToken(email, expires, hash) {
 
-  },
+  }
 
-  validateToken(token, hash) {
+  static validateToken(token, hash) {
 
-  },
+  }
 
   /**
    * getByEmail
@@ -133,7 +156,7 @@ export const User = Bookshelf.Model.extend({
    * @param {object} options
    * @return {object} model
    */
-  getByEmail(email, options) {
+  static getByEmail(email, options) {
     options = options || {};
     options.require = true;
 
@@ -145,8 +168,10 @@ export const User = Bookshelf.Model.extend({
       return
     });
   }
-});
+}
 
 export const Users = Bookshelf.Collection.extend({
   model: User
 });
+
+export default Bookshelf.model('User', User);

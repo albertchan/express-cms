@@ -23,7 +23,7 @@ export const Role = Bookshelf.Model.extend({
    * @return {Array} Keys allowed in the `options` hash of the model's method
    */
   permittedOptions(methodName) {
-    let options = let options = Bookshelf.Model.permittedOptions();
+    let options = Bookshelf.Model.permittedOptions();
     const validOptions = {
       findOne: ['withRelated'],
       findAll: ['withRelated']

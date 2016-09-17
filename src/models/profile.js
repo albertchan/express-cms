@@ -3,22 +3,24 @@ import Bookshelf from './base';
 export const schema = {
   id: { type: 'increments', nullable: false, primary: true },
   user_id: { type: 'integer', nullable: false, unsigned: true, references: 'users.id' },
-  address1: { type: 'string', maxlength: 255 },
-  address2: { type: 'string', maxlength: 255 },
-  city: { type: 'string', maxlength: 255 },
-  state_code: { type: 'string', maxlength: 8 },
-  country_code: { type: 'string', maxlength: 8 },
-  zip_code: { type: 'string', maxlength: 32 },
-  tel_number: { type: 'string', maxlength: 32 }
+  address1: { type: 'string', maxlength: 255, nullable: true },
+  address2: { type: 'string', maxlength: 255, nullable: true },
+  city: { type: 'string', maxlength: 255, nullable: true },
+  state_code: { type: 'string', maxlength: 8, nullable: true },
+  country_code: { type: 'string', maxlength: 8, nullable: true },
+  zip_code: { type: 'string', maxlength: 32, nullable: true },
+  tel_number: { type: 'string', maxlength: 32, nullable: true }
 };
 
-export const Profile = Bookshelf.Model.extend({
-  tableName: 'profiles',
+export class Profile extends Bookshelf.Model {
+  get tableName() {
+    return 'profiles';
+  }
 
   user() {
-    return this.belongsTo('User');
+    return this.belongsTo('User', 'user_id');
   }
-}, {
+
   /**
    * permittedOptions
    *
@@ -28,7 +30,7 @@ export const Profile = Bookshelf.Model.extend({
    * @param {String} methodName Name of the method to check valid options for
    * @return {Array} Keys allowed in the `options` hash of the model's method
    */
-  permittedOptions(methodName) {
+  static permittedOptions(methodName) {
     let options = Bookshelf.Model.permittedOptions();
     const validOptions = {
       findOne: ['withRelated'],
@@ -41,4 +43,6 @@ export const Profile = Bookshelf.Model.extend({
 
     return options;
   }
-});
+}
+
+export default Bookshelf.model('Profile', Profile);
