@@ -9,7 +9,8 @@ export const schema = {
   state_code: { type: 'string', maxlength: 8, nullable: true },
   country_code: { type: 'string', maxlength: 8, nullable: true },
   zip_code: { type: 'string', maxlength: 32, nullable: true },
-  tel_number: { type: 'string', maxlength: 32, nullable: true }
+  tel_number: { type: 'string', maxlength: 32, nullable: true },
+  bio: { type: 'text', maxlength: 65535, nullable: true }
 };
 
 export class Profile extends Bookshelf.Model {

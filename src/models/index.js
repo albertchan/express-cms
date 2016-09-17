@@ -1,4 +1,5 @@
 import { schema as users, User } from './user';
+import { schema as posts, Post } from './post';
 import { schema as profiles, Profile } from './profile';
 import { schema as schema_migrations } from './base/schema_migration';
 
@@ -12,6 +13,7 @@ import { schema as schema_migrations } from './base/schema_migration';
 
 export const schema = {
   users: users,
+  posts: posts,
   profiles: profiles,
   schema_migrations: schema_migrations
 };

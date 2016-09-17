@@ -7,19 +7,19 @@ const template = `
       <td></td>
       <td>Name</td>
       <td>Email</td>
+      <td>Username</td>
       <td>Date joined</td>
     </tr>
   </thead>
   <tbody>
     <user-table-row v-for="item in items" :model="item"></user-table-row>
   </tbody>
-</table>
-`;
+</table>`;
 
 export const usersTable = new Vue({
   template: template,
   data: {
-    items: () => [{email: 'achan@palo-it.com', name: 'Albert'}]
+    items: () => []
   }
 });
 
@@ -27,12 +27,12 @@ const usersTableRow = Vue.component('user-table-row', {
   props: {
     model: Object
   },
-  template: [
-    '<tr>',
-      '<td></td>',
-      '<td>{{model.name}}</td>',
-      '<td>{{model.email}}</td>',
-      '<td>{{model.created_at}}</td>',
-    '</tr>'
-  ].join('')
+  template: `
+    <tr>
+      <td></td>
+      <td><a v-bind:href="'/users/'.concat(model.username)">{{model.name}}</a></td>
+      <td>{{model.email}}</td>
+      <td>{{model.username}}</td>
+      <td>{{model.created_at}}</td>
+    </tr>`
 });

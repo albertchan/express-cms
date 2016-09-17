@@ -1,9 +1,9 @@
-import bookshelf from 'bookshelf';
 import _intersection from 'lodash/intersection';
 import _map from 'lodash/map';
 import _pick from 'lodash/pick';
 import _result from 'lodash/result';
 import _union from 'lodash/union';
+import bookshelf from 'bookshelf';
 import db from '../../lib/db';
 import { filter } from '../plugins';
 

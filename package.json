@@ -17,7 +17,7 @@
     "build-server": "./node_modules/.bin/babel ./src/index.js --out-file prod-server.js",
     "dev": "concurrently --kill-others \"npm run dev-client\" \"npm run dev-server\"",
     "dev-client": "brunch watch --server",
-    "dev-server": "nodemon -w src --ignore src/client/ --exec \"babel-node src/server --presets es2015,stage-0\"",
+    "dev-server": "VUE_ENV=server nodemon -w src --ignore src/client/ --exec \"babel-node src/server --presets es2015,stage-0\"",
     "prod": "brunch build --production",
     "prod-server": "node ./prod-server.js"
   },

@@ -1,7 +1,9 @@
 import Vue from 'vue';
+import validator from 'validator';
 import { createRenderer } from 'vue-server-renderer';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
+// import profiles from '../models/profile';
 import { usersTable } from '../components/users_table';
 
 export function index(req, res) {
@@ -21,7 +23,7 @@ export function index(req, res) {
 
 export function add(req, res) {
   res.render('user/new', {
-    title: 'Users'
+    title: 'Create a new user'
   });
 }
 
@@ -29,19 +31,40 @@ export function create(req, res, next) {
   if (!req.body) return res.status(400);
 
   const data = req.body;
-  User.add(data);
-  res.status(200).send(data);
+  User.add(data).then(result => {
+    if (result.user_id) {
+      res.redirect('/users');
+    }
+  });
 }
 
 export function read(req, res) {
-  res.render('user/show', {
-    title: 'Users'
+  let data;
+  const id = req.params.id;
+
+  if (isNaN(id)) {
+    data = {username: id};
+  } else {
+    data = {id: validator.toInt(id)};
+  }
+
+  User.findOne(data).then(user => {
+    const userData = user.toJSON();
+    delete userData.password;
+
+    res.render('user/show', {
+      title: 'User profile',
+      user: userData
+    });
+  }).catch(err => {
+    console.error(err);
+    res.status(404).render('error');
   });
 }
 
 export function update(req, res) {
   res.render('user/edit', {
-    title: 'Users'
+    title: 'Edit user'
   });
 }
 

@@ -1,10 +1,16 @@
+import _union from 'lodash/union';
+import bcrypt from 'bcryptjs';
+import Promise from 'bluebird';
+import validator from 'validator';
 import Bookshelf from './base';
 import { Profile } from './profile';
-import uuid from 'node-uuid';
+import profiles from './profile';
+import { bcryptCompare, bcryptHash } from '../lib/utils/bcrypt-then';
 
 export const schema = {
   id: { type: 'increments', nullable: false, primary: true },
-  uuid: { type: 'string', maxlength: 36, nullable: false, validations: { isUUID: true }},
+  external_id: { type: 'integer', nullable: true, unsigned: true },
+  username: { type: 'string', maxlength: 150, nullable: false, unique: true },
   email: { type: 'string', maxlength: 255, nullable: false, unique: true, validations: { isEmail: true }},
   name: { type: 'string', maxlength: 255, nullable: false },
   password: { type: 'string', maxlength: 255, nullable: false },
@@ -18,6 +24,10 @@ export class User extends Bookshelf.Model {
 
   get hasTimestamps() {
     return true;
+  }
+
+  posts() {
+    return this.hasMany('Posts', 'user_id');
   }
 
   profile() {
@@ -57,7 +67,10 @@ export class User extends Bookshelf.Model {
    * @extends Bookshelf.Model.findOne to include roles
    */
   static findOne(data, options) {
+    options = options || {};
+    options.withRelated = _union(options.withRelated, ['profile']);
 
+    return this.forge(data).fetch(options);
   }
 
   /**
@@ -71,32 +84,38 @@ export class User extends Bookshelf.Model {
    */
   static add(data, options) {
     const userData = {
-      uuid: uuid.v4(),
       email: data.email,
+      username: data.username,
       name: data.name,
       password: data.password
     };
 
-    Bookshelf.transaction(t => {
-      return User.forge()
-        .save(userData, {transacting: t})
-        .then(addedUser => {
-          // TODO: Need to wait for Bookshelf to get relations right and refactor
-          // this ugly manual crap
-          return Profile.forge().save({user_id: addedUser.id}, {transacting: t});
-        })
-        .then(addedProfile => {
-          t.commit;
-          return addedProfile;
-        })
-        .catch(error => {
-          t.rollback;
-          console.error('error --->', error);
-        });
+    return bcryptHash(userData.password).then(hash => {
+      userData.password = hash;
+
+      return Bookshelf.transaction(t => {
+        return User.forge()
+          .save(userData, {transacting: t})
+          .then(addedUser => {
+            // TODO: Need to wait for Bookshelf to get relations right and refactor
+            // this ugly manual crap
+            return Profile.forge().save({user_id: addedUser.id}, {transacting: t});
+          })
+          .then(addedProfile => {
+            t.commit;
+            return addedProfile;
+          })
+          .catch(error => {
+            t.rollback;
+            console.error(error);
+            return error;
+          });
+      });
     }).then(model => {
-      // ok
+      return model.toJSON();
     }).catch(error => {
       console.error(error);
+      return error;
     });
   }
 
@@ -168,6 +187,11 @@ export class User extends Bookshelf.Model {
       return
     });
   }
+}
+
+function generatePasswordHash(password) {
+  // Auto-gen a salt and hash
+  return bcrypt.hash(password, 10);
 }
 
 export const Users = Bookshelf.Collection.extend({
