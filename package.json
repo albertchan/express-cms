@@ -22,6 +22,7 @@
     "prod-server": "node ./prod-server.js"
   },
   "dependencies": {
+    "bcryptjs": "~2.3.0",
     "bluebird": "~3.4.0",
     "body-parser": "~1.15.0",
     "bookshelf": "~0.10.0",
@@ -31,6 +32,7 @@
     "hbs": "~4.0.0",
     "knex": "~0.11.0",
     "lodash": "~4.15.0",
+    "moment": "~2.15.0",
     "node-uuid": "~1.4.0",
     "oauth2orize": "~1.5.0",
     "pg": "~4.1.0",
