@@ -3,7 +3,6 @@ import validator from 'validator';
 import { createRenderer } from 'vue-server-renderer';
 import { User } from '../models/user';
 import { Profile } from '../models/profile';
-// import profiles from '../models/profile';
 import { usersTable } from '../components/users_table';
 
 export function index(req, res) {
@@ -30,8 +29,8 @@ export function add(req, res) {
 export function create(req, res, next) {
   if (!req.body) return res.status(400);
 
-  const data = req.body;
-  User.add(data).then(result => {
+  const changeset = req.body;
+  User.add(changeset).then(result => {
     if (result.user_id) {
       res.redirect('/users');
     }

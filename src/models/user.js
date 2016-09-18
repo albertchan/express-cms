@@ -26,6 +26,7 @@ export class User extends Bookshelf.Model {
     return true;
   }
 
+  // Relations
   posts() {
     return this.hasMany('Posts', 'user_id');
   }
@@ -127,7 +128,18 @@ export class User extends Bookshelf.Model {
    * @param {object} object
    */
   static check(data) {
+    return this.getByEmail(data.email).then(user => {
+      if (!user) {
+        return Promise.reject(new Error('User not found.'));
+      }
 
+      return bcryptCompare(data.password, user.get('password')).then(matched => {
+        if (!matched) {
+          return Promise.reject(new Error('Invalid username or password.'));
+        }
+        return Promise.resolve(user);
+      });
+    })
   }
 
   /**
@@ -183,15 +195,9 @@ export class User extends Bookshelf.Model {
       return user;
     })
     .catch(err => {
-      console.log('User not found.');
-      return
+      console.error('User not found.');
     });
   }
-}
-
-function generatePasswordHash(password) {
-  // Auto-gen a salt and hash
-  return bcrypt.hash(password, 10);
 }
 
 export const Users = Bookshelf.Collection.extend({

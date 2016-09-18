@@ -17,7 +17,7 @@ Bookshelf.plugin('registry');
 // Load the Bookshelf pagination plugin for `fetchPage`
 Bookshelf.plugin('pagination');
 
-// Load the Ghost filter plugin, which handles applying a 'filter' to findPage requests
+// Load the filter plugin, which handles applying a 'filter' to findPage requests
 Bookshelf.plugin(filter);
 
 Bookshelf.Model = Bookshelf.Model.extend({
@@ -185,6 +185,22 @@ Bookshelf.Model = Bookshelf.Model.extend({
 
       return data;
     });
+  },
+
+  /**
+   * add
+   *
+   * Naive add
+   * @param {Object} data
+   * @param {Object} options (optional)
+   * @return {Promise(Bookshelf.Model)} Newly Added Model
+   */
+  add(data, options) {
+    data = this.filterData(data);
+    options = this.filterOptions(options, 'add');
+    const model = this.forge(data);
+
+    return model.save(null, options);
   }
 });
 
