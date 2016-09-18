@@ -15,7 +15,15 @@ export function add(req, res) {
 }
 
 export function create(req, res) {
+  if (!req.session.user) return res.status(401);
+  if (!req.body) return res.status(400);
 
+  const changeset = req.body;
+  changeset.user_id = req.session.user.id;
+
+  Post.add(changeset).then(result => {
+    console.log('post create', result);
+  });
 }
 
 export function read(req, res) {

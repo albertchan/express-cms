@@ -1,4 +1,8 @@
+import _toString from 'lodash/toString';
+import showdown from 'showdown';
 import Bookshelf from './base';
+
+const converter = new showdown.Converter();
 
 export const schema = {
   id: { type: 'increments', nullable: false, primary: true },
@@ -25,8 +29,22 @@ export class Post extends Bookshelf.Model {
     return true;
   }
 
+  // Relations
   user() {
     return this.belongsTo('User', 'user_id');
+  }
+
+  // Events
+  saving(model, attr, options) {
+    let markdown;
+    let title = 'Untitled';
+    let tags = [];
+
+    title = this.get('title') || title;
+    this.set('title', _toString(title).trim());
+
+    markdown = _toString(this.get('markdown'));
+    this.set('html', converter.makeHtml(markdown));
   }
 
   /**
@@ -51,6 +69,20 @@ export class Post extends Bookshelf.Model {
     }
 
     return options;
+  }
+
+  /**
+   * add
+   *
+   * @extends Bookshelf.Model.add to handle returning the full object
+   * **See:** [Bookshelf.Model.add](base.js.html#add)
+   */
+  static add(data, options) {
+    options = options || {};
+
+    return Bookshelf.Model.add.call(this, data, options).then(post => {
+      return post;
+    });
   }
 }
 
