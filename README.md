@@ -6,7 +6,7 @@ This is a modern JS skeleton for [Brunch](http://brunch.io).
 
 Clone this repo manually or use `brunch new dir -s brunch/with-es6`
 
-## Migrations
+## Database setup and migrations
 
 ```
 CREATE DATABASE "express_cms_dev";
@@ -14,6 +14,14 @@ CREATE USER express WITH PASSWORD 'verysecret';
 ALTER ROLE express SET client_encoding TO 'utf8';
 GRANT ALL PRIVILEGES ON DATABASE "express_cms_dev" TO express;
 \q
+```
+
+## Knex CLI
+
+Running `knex-cli` commands from within the project root:
+
+```
+./node_modules/.bin/knex <command>
 ```
 
 ## Getting started
