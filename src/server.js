@@ -5,6 +5,7 @@ import Express from 'express';
 import hbs from 'hbs';
 import path from 'path';
 import Promise from 'bluebird';
+import session from 'express-session';
 import { getDatabaseVersion, populate } from './lib/migrations';
 import config from './config/server.config';
 import routes from './routes';
@@ -43,6 +44,9 @@ server.use(compression({
 
 // serve static files
 server.use(Express.static('public'));
+
+// session management
+server.use(session(config.session));
 
 // ------------------------------------
 // View helpers

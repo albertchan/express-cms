@@ -1,7 +1,7 @@
 import {
   index,
-  create,
   add,
+  create,
   read,
   update
 } from '../controllers/user_controller';

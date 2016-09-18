@@ -35,8 +35,17 @@ module.exports = {
     password: 'verysecret',
     database: 'express_cms_dev',
     charset: 'utf-8'
-  }
+  },
+
   // migrations: {
   //   tableName: 'migrations'
   // }
+
+  // Session management
+  session: {
+    secret: 'S6tdqAkQbPHzQr1qSv0h6OT5yH+wvYsvbfR5xC3UhKduS/SeyS7lC1cOddtB7Tmz',
+    resave: false,
+    saveUninitialized: true,
+    cookie: process.env === 'production' ? { secure: true } : {}
+  }
 };
