@@ -1,11 +1,15 @@
+import _each from 'lodash/forEach';
 import _intersection from 'lodash/intersection';
 import _map from 'lodash/map';
 import _pick from 'lodash/pick';
 import _result from 'lodash/result';
 import _union from 'lodash/union';
 import bookshelf from 'bookshelf';
+import moment from 'moment';
 import db from '../../lib/db';
 import { filter } from '../plugins';
+import { schema } from '../index';
+import { validateSchema } from '../../lib/validation';
 
 // Initialize a new Bookshelf instance for reference elsewhere in app
 let Bookshelf;
@@ -30,9 +34,40 @@ Bookshelf.Model = Bookshelf.Model.extend({
     return [];
   },
 
+  // Bookshelf `initialize`; declare a constructor-like method for model creation
+  initialize() {
+    this.on('saving', (model, attrs, options) => {
+      return Promise.resolve(this.saving(model, attrs, options)).then(() => {
+        return this.validate(model, attrs, options);
+      });
+    });
+  },
+
+  validate() {
+    return validateSchema(this.tableName, this.toJSON());
+  },
+
+  saving(newObj, attr, options) {
+    // empty
+  },
+
+  parse(attrs) {
+    return this.formatDateWhenFetch(attrs);
+  },
+
   // Fix date when retreiving from different databases (e.g. mysql, postgres)
   formatDateWhenFetch(attrs) {
+    var self = this;
 
+    _each(attrs, function each(value, key) {
+      if (value !== null
+        && (schema[self.tableName].hasOwnProperty(key)
+        && schema[self.tableName][key].type === 'dateTime')
+        || (key == 'created_at' || key == 'updated_at')) {
+        attrs[key] = moment(value).toDate();
+      }
+    });
+    return attrs;
   },
 
   // Normalize date format before inserting into database

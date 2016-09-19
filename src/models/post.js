@@ -1,8 +1,7 @@
 import _toString from 'lodash/toString';
-import showdown from 'showdown';
+import _union from 'lodash/union';
+import uuid from 'node-uuid';
 import Bookshelf from './base';
-
-const converter = new showdown.Converter();
 
 export const schema = {
   id: { type: 'increments', nullable: false, primary: true },
@@ -13,11 +12,12 @@ export const schema = {
   visibility: { type: 'string', maxlength: 150, nullable: false, defaultTo: 'public' },
   slug: { type: 'string', maxlength: 150, nullable: false, unique: true },
   title: { type: 'string', maxlength: 255, nullable: false },
-  featured: { type: 'bool', nullable: false, defaultTo: false },
-  html: { type: 'text', maxlength: 16777215, nullable: true },
+  lead_image: { type: 'string', maxlength: 255, nullable: true, validations: { isURL: true }},
   markdown: { type: 'text', maxlength: 16777215, nullable: true },
   summary: { type: 'string', maxlength: 255, nullable: true },
-  published_at: { type: 'dateTime', nullable: true }
+  featured: { type: 'bool', nullable: false, defaultTo: false },
+  published_at: { type: 'dateTime', nullable: true, defaultTo: null, validations: { isDate: true }},
+  timestamps: { type: 'timestamps' }
 }
 
 export class Post extends Bookshelf.Model {
@@ -37,14 +37,22 @@ export class Post extends Bookshelf.Model {
   // Events
   saving(model, attr, options) {
     let markdown;
+    let publishedAt = this.get('published_at');
+    // let status = this.get('status');
     let title = 'Untitled';
     let tags = [];
+
+    this.set('uuid', uuid.v4());
 
     title = this.get('title') || title;
     this.set('title', _toString(title).trim());
 
-    markdown = _toString(this.get('markdown'));
-    this.set('html', converter.makeHtml(markdown));
+    // logic for published_at
+    if (!publishedAt) {
+      this.set('published_at', new Date());
+    }
+
+    Bookshelf.Model.prototype.saving.call(this, model, attr, options);
   }
 
   /**
@@ -83,6 +91,18 @@ export class Post extends Bookshelf.Model {
     return Bookshelf.Model.add.call(this, data, options).then(post => {
       return post;
     });
+  }
+
+  /**
+   * findOne
+   *
+   * @extends Bookshelf.Model.findOne to include user/author
+   */
+  static findOne(data, options) {
+    options = options || {};
+    options.withRelated = _union(options.withRelated, ['user']);
+
+    return this.forge(data).fetch(options);
   }
 }
 
