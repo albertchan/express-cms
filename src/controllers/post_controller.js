@@ -33,14 +33,10 @@ export function create(req, res) {
   changeset.user_id = req.session.user.id;
 
   Post.add(changeset).then(result => {
-    res.render('post/edit', {
-      action: '/posts/edit',
-      title: 'Edit post',
-      changeset: result.toJSON()
-    });
-  }).catch(err => {
-    console.log(err);
+    const item = result.toJSON();
 
+    res.redirect(`/posts/${item.id}/edit`);
+  }).catch(err => {
     const errors = [
       {
         code: 400,
@@ -79,8 +75,47 @@ export function read(req, res) {
   });
 }
 
+export function edit(req, res) {
+  let data;
+  const id = req.params.id;
+
+  if (isNaN(id)) {
+    data = {slug: id};
+  } else {
+    data = {id: validator.toInt(id)};
+  }
+
+  Post.findOne(data).then(post => {
+    const postData = post.toJSON();
+
+    res.render('post/edit', {
+      title: 'Edit post',
+      changeset: postData
+    });
+  }).catch(err => {
+    console.error(err);
+    res.status(404).render('error');
+  });
+}
+
 export function update(req, res) {
-  res.render('post/edit', {
-    title: 'Edit post'
+  if (!req.session.user) return res.status(401);
+  let idObject;
+  const id = req.params.id;
+  const changeset = req.body;
+
+  if (isNaN(id)) {
+    idObject = {slug: id};
+  } else {
+    idObject = {id: validator.toInt(id)};
+  }
+
+  Post.update(idObject, changeset).then(result => {
+    const postData = result.toJSON();
+
+    res.render('post/edit', {
+      title: 'Edit post',
+      changeset: postData
+    });
   });
 }

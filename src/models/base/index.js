@@ -242,13 +242,14 @@ Bookshelf.Model = Bookshelf.Model.extend({
    * update
    *
    * Naive update
+   * @param {Object} id (required)
    * @param {Object} data
    * @param {Object} options (optional)
    * @return {Promise(Bookshelf.Model)} Edited Model
    */
-  update(data, options) {
-    const id = options.id;
-    const model = this.forge({id: id});
+  update(id, data, options) {
+    // const id = options.id;
+    const model = this.forge(id);
 
     data = this.filterData(data);
     options = this.filterOptions(options, 'edit');
