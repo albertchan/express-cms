@@ -2,6 +2,7 @@ import {
   index,
   add,
   create,
+  edit,
   read,
   update
 } from '../controllers/post_controller';
@@ -18,5 +19,7 @@ export default (server) => {
 
   server.get('/posts/:id', read);
 
-  server.get('/posts/:id/edit', update);
+  server.get('/posts/:id/edit', edit);
+
+  server.post('/posts/:id/edit', update);
 }

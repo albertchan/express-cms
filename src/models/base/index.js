@@ -236,6 +236,28 @@ Bookshelf.Model = Bookshelf.Model.extend({
     const model = this.forge(data);
 
     return model.save(null, options);
+  },
+
+  /**
+   * update
+   *
+   * Naive update
+   * @param {Object} data
+   * @param {Object} options (optional)
+   * @return {Promise(Bookshelf.Model)} Edited Model
+   */
+  update(data, options) {
+    const id = options.id;
+    const model = this.forge({id: id});
+
+    data = this.filterData(data);
+    options = this.filterOptions(options, 'edit');
+
+    return model.fetch(options).then(object => {
+      if (object) {
+        return object.save(data, options);
+      }
+    });
   }
 });
 

@@ -16,7 +16,7 @@ export function index(req, res) {
         title: 'Users',
         usersTable: html
       });
-    })
+    });
   });
 }
 

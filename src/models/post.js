@@ -94,6 +94,26 @@ export class Post extends Bookshelf.Model {
   }
 
   /**
+   * update
+   *
+   * @extends Bookshelf.Model.update to handle returning the full object and manage _updatedAttributes
+   * **See:** [Bookshelf.Model.update](base.js.html#update)
+   */
+  update(data, options) {
+    options = options || {};
+
+    return Bookshelf.Model.update.call(this, data, options).then(post => {
+      return self.findOne({status: 'all', id: options.id}, options).then(found => {
+        if (found) {
+          // Pass along the updated attributes for checking status changes
+          found._updatedAttributes = post._updatedAttributes;
+          return found;
+        }
+      });
+    });
+  }
+
+  /**
    * findOne
    *
    * @extends Bookshelf.Model.findOne to include user/author
